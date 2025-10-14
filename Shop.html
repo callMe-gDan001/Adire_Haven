@@ -5,7 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Shop - Adire Haven</title>
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap" rel="stylesheet">
-    <link href="assets/css/shop.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: #f8f8f8; }
+
+        /* Navbar */
+        nav { background-color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; height: 80px; }
+        .logo { display: flex; align-items: center; }
+        .logo img { height: 60px; width: auto; }
+        .nav-links { display: flex; gap: 40px; list-style: none; }
+        .nav-links a { text-decoration: none; color: #333; font-size: 16px; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: #2a2a2a; }
+        .nav-actions { display: flex; gap: 20px; align-items: center; }
+        .cart-icon, .user-icon { cursor: pointer; display: flex; align-items: center; position: relative; }
+        .cart-icon svg, .user-icon svg { width: 24px; height: 24px; stroke: #333; transition: stroke 0.3s; }
+        .cart-count { position: absolute; top: -8px; right: -8px; background: #2a2a2a; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+        .mobile-menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 5px; }
+        .mobile-menu-btn svg { width: 28px; height: 28px; stroke: #333; }
+        .mobile-nav { display: none; background-color: white; border-top: 1px solid #e5e5e5; padding: 20px; }
+        .mobile-nav.active { display: block; }
+        .mobile-nav a { display: block; padding: 12px 16px; text-decoration: none; color: #333; border-radius: 6px; }
+
+        .shop-header { margin-top: 80px; padding: 60px 20px 40px; background: white; border-bottom: 1px solid #e5e5e5; }
+        .shop-header h1 { font-size: 48px; font-weight: 700; color: #2a2a2a; text-align: center; margin-bottom: 10px; }
+        .shop-header p { text-align: center; color: #666; font-size: 16px; }
+
+        .filters-section { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .filters { background: white; padding: 20px; border-radius: 8px; display: flex; gap: 20px; flex-wrap: wrap; }
+        .filter-group { flex: 1; min-width: 200px; }
+        .filter-group label { display: block; font-size: 14px; font-weight: 600; color: #2a2a2a; margin-bottom: 8px; }
+        .filter-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+
+        .products-section { max-width: 1200px; margin: 30px auto; padding: 0 20px 60px; }
+        .category-section { margin-bottom: 60px; }
+        .category-title { font-size: 32px; font-weight: 600; color: #2a2a2a; margin-bottom: 30px; }
+        .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+        .product-card { background: white; border-radius: 8px; overflow: hidden; cursor: pointer; transition: all 0.3s; }
+        .product-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.1); transform: translateY(-5px); }
+        .product-image { position: relative; height: 350px; overflow: hidden; }
+        .product-image img { width: 100%; height: 100%; object-fit: cover; }
+        .product-badge { position: absolute; top: 15px; left: 15px; background: #2a2a2a; color: white; padding: 6px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .product-badge.new { background: #00a86b; }
+        .product-info { padding: 20px; }
+        .product-info h4 { font-size: 18px; font-weight: 600; color: #2a2a2a; margin-bottom: 8px; }
+        .product-category { font-size: 13px; color: #999; margin-bottom: 12px; }
+        .product-price { font-size: 20px; font-weight: 700; color: #2a2a2a; margin-bottom: 15px; }
+        .price-range { font-size: 16px; color: #666; }
+        .add-to-cart-btn { width: 100%; padding: 12px; background: #2a2a2a; color: white; border: none; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; border-radius: 4px; }
+        .add-to-cart-btn:hover { background: #000; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 40px; border-radius: 8px; width: 90%; max-width: 450px; position: relative; }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 28px; color: #999; cursor: pointer; font-weight: 300; transition: color 0.3s; }
+        .close-modal:hover { color: #333; }
+        .modal-content h2 { font-size: 28px; font-weight: 700; color: #2a2a2a; margin-bottom: 10px; }
+        .modal-content p { color: #666; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 14px; font-weight: 600; color: #2a2a2a; margin-bottom: 8px; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        .btn-login { width: 100%; padding: 14px; background: #2a2a2a; color: white; border: none; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 15px; border-radius: 4px; }
+        .btn-login:hover { background: #000; }
+        .modal-footer { text-align: center; color: #666; font-size: 14px; }
+        .modal-footer a { color: #2a2a2a; font-weight: 600; text-decoration: none; cursor: pointer; }
+
+        .cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; height: 100vh; background: white; box-shadow: -2px 0 10px rgba(0,0,0,0.1); z-index: 1500; transition: right 0.3s; display: flex; flex-direction: column; }
+        .cart-sidebar.active { right: 0; }
+        .cart-header { padding: 20px; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: center; background: white; flex-shrink: 0; }
+        .cart-header h3 { font-size: 20px; font-weight: 700; color: #2a2a2a; }
+        .close-cart { cursor: pointer; font-size: 24px; color: #666; }
+        .cart-items { padding: 20px; min-height: 200px; flex: 1; overflow-y: auto; }
+        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e5e5e5; }
+        .cart-item-img { width: 80px; height: 80px; object-fit: cover; border-radius: 4px; }
+        .cart-item-info { flex: 1; }
+        .cart-item-info h4 { font-size: 16px; font-weight: 600; color: #2a2a2a; margin-bottom: 5px; }
+        .cart-item-price { font-size: 16px; font-weight: 700; color: #2a2a2a; margin-bottom: 8px; }
+        .remove-item { color: #999; font-size: 12px; cursor: pointer; text-decoration: underline; }
+        .cart-footer { padding: 20px; background: white; border-top: 1px solid #e5e5e5; flex-shrink: 0; }
+        .cart-total { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 18px; font-weight: 700; color: #2a2a2a; }
+        .checkout-btn { width: 100%; padding: 14px; background: #2a2a2a; color: white; border: none; font-size: 16px; font-weight: 600; cursor: pointer; border-radius: 4px; }
+        .empty-cart { text-align: center; padding: 40px 20px; color: #999; }
+
+        @media (max-width: 992px) {
+            .products-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+            .filters { flex-direction: column; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+            .products-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+            .cart-sidebar { width: 100%; right: -100%; }
+            .shop-header h1 { font-size: 32px; }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
     <nav>
@@ -15,7 +113,7 @@
             </a>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="Shop.html">Shop</a></li>
+                <li><a href="shop.html">Shop</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
@@ -59,20 +157,12 @@
             <div class="filter-group">
                 <label>Category</label>
                 <select id="categoryFilter">
-                    <option value="all">All Categories</option>
-                    <option value="men">Men's Collection</option>
-                    <option value="women">Women's Collection</option>
-                    <option value="kids">Kids Collection</option>
-                    <option value="accessories">Accessories</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label>Sort By</label>
-                <select id="sortFilter">
-                    <option value="featured">Featured</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="newest">Newest First</option>
+                    <option value="all">All Collections</option>
+                    <option value="batik">Adire Batik</option>
+                    <option value="menswear">Adire Menswear</option>
+                    <option value="womenswear">Adire Womenswear</option>
+                    <option value="twopiece">Adire Two-Piece</option>
+                    <option value="tyedye">Adire Tye & Dye</option>
                 </select>
             </div>
         </div>
@@ -80,10 +170,12 @@
 
     <div class="products-section" id="productsSection"></div>
 
-    <div class="modal" id="loginModal">
+    <div class="modal" id="authModal">
         <div class="modal-content">
-            <h2>Sign In Required</h2>
-            <p>Please sign in to add items to your cart and make purchases</p>
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2 id="authTitle">Sign In Required</h2>
+            <p id="authSubtitle">Please sign in to add items to your cart and make purchases</p>
+            
             <form id="loginForm">
                 <div class="form-group">
                     <label>Email</label>
@@ -95,8 +187,30 @@
                 </div>
                 <button type="submit" class="btn-login">Sign In</button>
             </form>
+
+            <form id="signupForm" style="display: none;">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" required placeholder="••••••••" minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" required placeholder="••••••••" minlength="6">
+                </div>
+                <button type="submit" class="btn-login">Create Account</button>
+            </form>
+
             <div class="modal-footer">
-                Don't have an account? <a href="#" id="signupLink">Sign Up</a>
+                <span id="toggleText">Don't have an account? </span>
+                <a id="toggleAuth">Sign Up</a>
             </div>
         </div>
     </div>
@@ -116,8 +230,223 @@
         </div>
     </div>
 
-    <script src="assets/js/shop.js">
+    <script>
+        const products = [
+            // Adire Batik
+            { id: 1, name: "Adire Batik Fabric (Unsewn)", category: "batik", price: 20000, image: "assets/images/adire_batik1.jpeg", description: "5 yards", badge: "Best Seller" },
+            { id: 2, name: "Adire Batik Fabric (Unsewn)", category: "batik", price: 20000, image: "assets/images/adire_batik2.jpeg", description: "5 yards" },
+            { id: 3, name: "Adire Batik Fabric (Unsewn)", category: "batik", price: 20000, image: "assets/images/adire_batik3.jpeg", description: "5 yards" },
+            { id: 4, name: "Adire Batik Long Gown", category: "batik", price: 12000, image: "assets/images/adire_batik4.jpeg" },
+            { id: 5, name: "Adire Batik Short Gown", category: "batik", price: 10000, image: "assets/images/adire_batik5.jpeg" },
+            { id: 6, name: "Adire Batik Fabric (Unsewn)", category: "batik", price: 20000, image: "assets/images/adire_batik6.jpeg", description: "5 yards" },
+            
+            // Adire Menswear
+            { id: 7, name: "Adire Men's Kaftan", category: "menswear", price: 15000, image: "assets/images/adire_men1.jpeg", badge: "Popular" },
+            { id: 8, name: "Adire Men's Traditional Set", category: "menswear", price: 15000, image: "assets/images/adire_men2.jpeg" },
+            { id: 9, name: "Adire Men's Premium Kaftan", category: "menswear", price: 25000, image: "assets/images/adire_men3.jpeg", badge: "Premium" },
+            { id: 10, name: "Adire Men's Short", category: "menswear", price: 12000, image: "assets/images/adire_men4.jpeg" },
+            
+            // Adire Womenswear
+            { id: 11, name: "Adire Long Gown", category: "womenswear", priceRange: "₦12,000 - ₦15,000", price: 12000, maxPrice: 15000, image: "assets/images/adire_gown1.jpeg", badge: "Best Seller" },
+            { id: 12, name: "Adire Long Gown", category: "womenswear", priceRange: "₦12,000 - ₦15,000", price: 12000, maxPrice: 15000, image: "assets/images/adire_gown2.jpeg" },
+            { id: 13, name: "Adire Long Gown", category: "womenswear", priceRange: "₦12,000 - ₦15,000", price: 12000, maxPrice: 15000, image: "assets/images/adire_gown3.jpeg" },
+            { id: 14, name: "Adire Short Gown", category: "womenswear", price: 10000, image: "assets/images/adire_gown4.jpeg" },
+            { id: 15, name: "Adire Long Gown", category: "womenswear", priceRange: "₦12,000 - ₦15,000", price: 12000, maxPrice: 15000, image: "assets/images/adire_gown5.jpeg" },
+            
+            // Adire Two-Piece
+            { id: 16, name: "Adire Two-Piece Set", category: "twopiece", price: 12000, image: "assets/images/adire_twopiece1.jpeg", badge: "New" },
+            { id: 17, name: "Adire Two-Piece Set", category: "twopiece", price: 12000, image: "assets/images/adire_twopiece2.jpeg" },
+            { id: 18, name: "Adire Two-Piece Set", category: "twopiece", price: 12000, image: "assets/images/adire_twopiece3.jpeg" },
+            { id: 19, name: "Adire Baggy Pants", category: "twopiece", price: 10000, image: "assets/images/adire_twopiece4.jpeg" },
+            { id: 20, name: "Adire Top", category: "twopiece", price: 7000, image: "assets/images/adire_twopiece5.jpeg" },
+            { id: 21, name: "Adire Two-Piece Set", category: "twopiece", price: 12000, image: "assets/images/adire_twopiece6.jpeg" },
+            { id: 22, name: "Adire Two-Piece Set", category: "twopiece", price: 12000, image: "assets/images/adire_twopiece7.jpeg" },
+            
+            // Adire Tye & Dye
+            { id: 23, name: "Adire Tye & Dye Fabric (Unsewn)", category: "tyedye", price: 18000, image: "assets/images/adire_tye-dye1.jpeg", description: "5 yards", badge: "Popular" },
+            { id: 24, name: "Adire Tye & Dye Fabric (Unsewn)", category: "tyedye", price: 18000, image: "assets/images/adire_tye-dye2.jpeg", description: "5 yards" },
+            { id: 25, name: "Adire Tye & Dye Gown", category: "tyedye", price: 10000, image: "assets/images/adire_tye-dye3.jpeg" },
+            { id: 26, name: "Adire Tye & Dye Top", category: "tyedye", price: 5000, image: "assets/images/adire_tye-dye4.jpeg" },
+        ];
+
+        let cart = [];
+        let isLoggedIn = false;
+        let currentUser = null;
+
+        const categoryNames = {
+            batik: "Adire Batik",
+            menswear: "Adire Menswear",
+            womenswear: "Adire Womenswear",
+            twopiece: "Adire Two-Piece",
+            tyedye: "Adire Tye & Dye"
+        };
+
+        function renderProducts() {
+            const section = document.getElementById('productsSection');
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const filtered = categoryFilter === 'all' ? products : products.filter(p => p.category === categoryFilter);
+            
+            const grouped = {};
+            filtered.forEach(p => { 
+                if (!grouped[p.category]) grouped[p.category] = []; 
+                grouped[p.category].push(p); 
+            });
+            
+            section.innerHTML = Object.keys(grouped).map(cat => `
+                <div class="category-section">
+                    <h2 class="category-title">${categoryNames[cat]}</h2>
+                    <div class="products-grid">
+                        ${grouped[cat].map(p => `
+                            <div class="product-card">
+                                <div class="product-image">
+                                    <img src="${p.image}" alt="${p.name}">
+                                    ${p.badge ? `<div class="product-badge ${p.badge === 'New' ? 'new' : ''}">${p.badge}</div>` : ''}
+                                </div>
+                                <div class="product-info">
+                                    <h4>${p.name}</h4>
+                                    <p class="product-category">${p.description || categoryNames[p.category]}</p>
+                                    <div class="product-price">
+                                        ${p.priceRange ? `<span class="price-range">${p.priceRange}</span>` : `₦${p.price.toLocaleString()}`}
+                                    </div>
+                                    <button class="add-to-cart-btn" onclick="addToCart(${p.id})">Add to Cart</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(productId) {
+            if (!isLoggedIn) { 
+                document.getElementById('authModal').classList.add('active'); 
+                return; 
+            }
+            const product = products.find(p => p.id === productId);
+            cart.push(product);
+            updateCart();
+            document.getElementById('cartSidebar').classList.add('active');
+        }
+
+        function updateCart() {
+            const cartItems = document.getElementById('cartItems');
+            const cartCount = document.getElementById('cartCount');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            cartCount.textContent = cart.length;
+            
+            if (cart.length === 0) { 
+                cartItems.innerHTML = '<div class="empty-cart">Your cart is empty</div>'; 
+                cartTotal.textContent = '₦0'; 
+                return; 
+            }
+            
+            cartItems.innerHTML = cart.map((item, idx) => `
+                <div class="cart-item">
+                    <img src="${item.image}" class="cart-item-img" alt="${item.name}">
+                    <div class="cart-item-info">
+                        <h4>${item.name}</h4>
+                        <p class="cart-item-price">₦${item.price.toLocaleString()}</p>
+                        <span class="remove-item" onclick="removeFromCart(${idx})">Remove</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            cartTotal.textContent = `₦${cart.reduce((sum, item) => sum + item.price, 0).toLocaleString()}`;
+        }
+
+        function removeFromCart(index) { 
+            cart.splice(index, 1); 
+            updateCart(); 
+        }
+
+        // Auth Toggle
+        document.getElementById('toggleAuth').addEventListener('click', (e) => {
+            e.preventDefault();
+            const loginForm = document.getElementById('loginForm');
+            const signupForm = document.getElementById('signupForm');
+            const title = document.getElementById('authTitle');
+            const subtitle = document.getElementById('authSubtitle');
+            const toggleText = document.getElementById('toggleText');
+            const toggleAuth = document.getElementById('toggleAuth');
+            
+            if (loginForm.style.display !== 'none') {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                title.textContent = 'Create Account';
+                subtitle.textContent = 'Join Adire Haven to start shopping';
+                toggleText.textContent = 'Already have an account? ';
+                toggleAuth.textContent = 'Sign In';
+            } else {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                title.textContent = 'Sign In Required';
+                subtitle.textContent = 'Please sign in to add items to your cart and make purchases';
+                toggleText.textContent = "Don't have an account? ";
+                toggleAuth.textContent = 'Sign Up';
+            }
+        });
+
+        // Login Handler
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            isLoggedIn = true;
+            currentUser = { email: e.target[0].value };
+            document.getElementById('authModal').classList.remove('active');
+            alert('Successfully logged in!');
+            e.target.reset();
+        });
+
+        // Signup Handler
+        document.getElementById('signupForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = e.target[2].value;
+            const confirmPassword = e.target[3].value;
+            if (password !== confirmPassword) { 
+                alert('Passwords do not match!'); 
+                return; 
+            }
+            isLoggedIn = true;
+            currentUser = { name: e.target[0].value, email: e.target[1].value };
+            document.getElementById('authModal').classList.remove('active');
+            alert(`Account created! Welcome, ${currentUser.name}!`);
+            e.target.reset();
+        });
+
+        // Event Listeners
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('authModal').classList.remove('active');
+        });
+        document.getElementById('cartIcon').addEventListener('click', () => document.getElementById('cartSidebar').classList.add('active'));
+        document.getElementById('closeCart').addEventListener('click', () => document.getElementById('cartSidebar').classList.remove('active'));
+        document.getElementById('userIcon').addEventListener('click', () => { 
+            if (!isLoggedIn) document.getElementById('authModal').classList.add('active'); 
+        });
+        document.getElementById('checkoutBtn').addEventListener('click', () => { 
+            if (!isLoggedIn) { 
+                document.getElementById('cartSidebar').classList.remove('active'); 
+                document.getElementById('authModal').classList.add('active'); 
+            } else { 
+                alert('Proceeding to checkout...'); 
+            } 
+        });
+        document.getElementById('categoryFilter').addEventListener('change', renderProducts);
+        document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+            const nav = document.getElementById('mobileNav');
+            const menuIcon = document.getElementById('menuIcon');
+            const closeIcon = document.getElementById('closeIcon');
+            nav.classList.toggle('active');
+            menuIcon.style.display = nav.classList.contains('active') ? 'none' : 'block';
+            closeIcon.style.display = nav.classList.contains('active') ? 'block' : 'none';
+        });
+        window.addEventListener('click', (e) => { 
+            if (e.target === document.getElementById('authModal')) 
+                document.getElementById('authModal').classList.remove('active'); 
+        });
         
+        renderProducts();
     </script>
 </body>
 </html>
+
+
